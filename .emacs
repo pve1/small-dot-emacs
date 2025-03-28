@@ -1,5 +1,11 @@
 ;;;; PvE's minimal Emacs configuration.
 
+;;; To use it, run:
+;;; $ emacs -q --load .emacs
+;;;
+;;; For "dark" mode, run:
+;;; $ emacs -q -rv --load .emacs
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Libs
