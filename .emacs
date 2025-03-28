@@ -94,6 +94,7 @@
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
 (global-set-key (kbd "C-<") 'other-window)
 (global-set-key (kbd "<insert>") 'other-window)
+(global-set-key (kbd "<insertchar>") 'other-window)
 (global-set-key (kbd "M-<end>") 'other-window)
 (global-set-key (kbd "M-<up>") 'backward-sexp)
 (global-set-key (kbd "M-<down>") 'forward-sexp)
