@@ -156,7 +156,7 @@
   (interactive)
   (kill-new (file-truename (dired-file-name-at-point))))
 
-(define-key dired-mode-map "" 'pve-dired-kill-filename-at-point)
+(define-key dired-mode-map (kbd "C-c C-f") 'pve-dired-kill-filename-at-point)
 
 (defun pve-dired-open-terminal-here ()
   (interactive)
