@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 ;;;; PvE's minimal Emacs configuration.
 
 ;;; To use it, run:
@@ -29,13 +31,6 @@
 (when load-file-name
   (let ((here (file-name-directory (file-truename load-file-name))))
     (add-to-list 'load-path here)))
-
-;; Ibs is included
-(let ((ibs (locate-library "ibs")))
-  (when ibs
-    ;; Set cycling key like this:
-    ;; (setq ibs-cycling-key "<C-tab>")
-    (load ibs)))
 
 (add-to-list 'load-path "~/emacs")
 (add-to-list 'load-path "~/emacs/elisp")
@@ -95,9 +90,9 @@
 (global-set-key (kbd "C-<") 'other-window)
 (global-set-key (kbd "<insert>") 'other-window)
 (global-set-key (kbd "<insertchar>") 'other-window)
-(global-set-key (kbd "M-<end>") 'other-window)
 (global-set-key (kbd "M-<up>") 'backward-sexp)
 (global-set-key (kbd "M-<down>") 'forward-sexp)
+(global-set-key (kbd "M-<end>") 'pve-buffer-cycle-go)
 
 (define-key emacs-lisp-mode-map '[S-iso-lefttab]
   'completion-at-point)
@@ -178,3 +173,67 @@
   (eldoc-mode 1))
 
 (add-hook 'emacs-lisp-mode-hook 'pve-emacs-lisp-hook)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Simple buffer cycling
+;;;
+
+(defvar pve-buffer-cycle-buffers nil)
+(defvar pve-buffer-cycle-seen-buffers nil)
+(defvar pve-buffer-cycle-active nil)
+
+(defun pve-buffer-cycle-make-stop-cmd (command)
+  (lambda ()
+    (interactive)
+    (pve-buffer-cycle-stop)
+    (call-interactively command)))
+
+(define-minor-mode pve-buffer-cycle
+  "Simple buffer cycling."
+  :lighter " Cycle"
+  :group pve
+  :keymap
+  (list (cons (kbd "C-g") (pve-buffer-cycle-make-stop-cmd
+                           'pve-buffer-cycle-restore-sanity))
+        (cons (kbd "<up>") (pve-buffer-cycle-make-stop-cmd 'previous-line))
+        (cons (kbd "<down>") (pve-buffer-cycle-make-stop-cmd 'next-line))
+        (cons (kbd "<left>") (pve-buffer-cycle-make-stop-cmd 'left-char))
+        (cons (kbd "<right>") (pve-buffer-cycle-make-stop-cmd 'right-char))))
+
+(defun pve-buffer-cycle-get-next-buffer ()
+  (let ((buf (pop pve-buffer-cycle-buffers)))
+    (if (or (minibufferp buf)
+            (string-prefix-p " *Echo Area " (buffer-name buf))
+            (string-prefix-p "*Echo Area " (buffer-name buf)))
+        (pve-buffer-cycle-get-next-buffer)
+      buf)))
+
+(defun pve-buffer-cycle-present-buffer (buffer)
+  (switch-to-buffer buf t t)
+  (push buf pve-buffer-cycle-seen-buffers)
+  (pve-buffer-cycle))
+
+(defun pve-buffer-cycle-go ()
+  (interactive)
+  (unless pve-buffer-cycle
+    (setf pve-buffer-cycle-buffers (cdr (buffer-list))))
+  (let ((buf (pve-buffer-cycle-get-next-buffer)))
+    (when buf
+      (pve-buffer-cycle-present-buffer buf))))
+
+(defun pve-buffer-cycle-stop ()
+  (interactive)
+  (dolist (buf pve-buffer-cycle-seen-buffers)
+    (with-current-buffer buf
+      (pve-buffer-cycle -1)))
+  (setf pve-buffer-cycle-seen-buffers nil)
+  (setf pve-buffer-cycle-buffers nil)
+  (switch-to-buffer (current-buffer)))
+
+(defun pve-buffer-cycle-restore-sanity ()
+  (interactive)
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (pve-buffer-cycle -1)))
+  (keyboard-quit))
