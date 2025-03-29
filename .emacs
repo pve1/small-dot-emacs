@@ -94,9 +94,6 @@
 (global-set-key (kbd "M-<down>") 'forward-sexp)
 (global-set-key (kbd "M-<end>") 'pve-buffer-cycle-go)
 
-(define-key emacs-lisp-mode-map '[S-iso-lefttab]
-  'completion-at-point)
-
 (define-key emacs-lisp-mode-map (kbd "M-r") 'raise-sexp)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
