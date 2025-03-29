@@ -200,11 +200,12 @@
 
 (defun pve-buffer-cycle-get-next-buffer ()
   (let ((buf (pop pve-buffer-cycle-buffers)))
-    (if (or (minibufferp buf)
-            (string-prefix-p " *Echo Area " (buffer-name buf))
-            (string-prefix-p "*Echo Area " (buffer-name buf)))
-        (pve-buffer-cycle-get-next-buffer)
-      buf)))
+    (when buf
+      (if (or (minibufferp buf)
+              (string-prefix-p " *Echo Area " (buffer-name buf))
+              (string-prefix-p "*Echo Area " (buffer-name buf)))
+          (pve-buffer-cycle-get-next-buffer)
+        buf))))
 
 (defun pve-buffer-cycle-present-buffer (buffer)
   (switch-to-buffer buffer t t)
