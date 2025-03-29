@@ -210,8 +210,8 @@
       buf)))
 
 (defun pve-buffer-cycle-present-buffer (buffer)
-  (switch-to-buffer buf t t)
-  (push buf pve-buffer-cycle-seen-buffers)
+  (switch-to-buffer buffer t t)
+  (push buffer pve-buffer-cycle-seen-buffers)
   (pve-buffer-cycle))
 
 (defun pve-buffer-cycle-go ()
