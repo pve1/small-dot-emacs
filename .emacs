@@ -188,7 +188,7 @@
 
 (define-minor-mode pve-buffer-cycle
   "Simple buffer cycling."
-  :lighter " Cycle"
+  :lighter #(" Cycle" 0 6 (face (:foreground "Red" :weight bold)))
   :group pve
   :keymap
   (list (cons (kbd "C-g") (pve-buffer-cycle-make-stop-cmd
