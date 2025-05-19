@@ -49,6 +49,7 @@
 (column-number-mode 1)
 (windmove-default-keybindings)
 (indent-tabs-mode -1)
+(ido-mode 'buffers)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
